@@ -4,8 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* TIAKI — Editorial archival design system.
- * Sand / leaf / sea / clay palette. Serif display + mono metadata.
+/* TIAKI — Premium Life Vault
+ * Dark base, glass surfaces, soft blue glow, warm gold for attention.
+ * Inspired by Notion Calendar, Arc, Linear, and Apple's system apps.
  */
 
 @theme inline {
@@ -36,69 +37,154 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* TIAKI semantic tokens */
-  --color-sand-50: var(--sand-50);
-  --color-sand-100: var(--sand-100);
-  --color-sand-200: var(--sand-200);
-  --color-leaf-900: var(--leaf-900);
-  --color-leaf-800: var(--leaf-800);
-  --color-leaf-700: var(--leaf-700);
-  --color-sea-600: var(--sea-600);
-  --color-sea-500: var(--sea-500);
-  --color-clay: var(--clay);
+  /* TIAKI semantic tokens — legacy names, premium dark values */
+  --color-sand-50: var(--sand-50);   /* app base */
+  --color-sand-100: var(--sand-100); /* surface / glass */
+  --color-sand-200: var(--sand-200); /* elevated */
+  --color-leaf-900: var(--leaf-900); /* primary text (white) */
+  --color-leaf-800: var(--leaf-800); /* dim text */
+  --color-leaf-700: var(--leaf-700); /* mute text */
+  --color-sea-600: var(--sea-600);   /* deep blue */
+  --color-sea-500: var(--sea-500);   /* accent blue */
+  --color-clay: var(--clay);         /* attention (warm gold) */
   --color-clay-soft: var(--clay-soft);
 
-  --font-display: 'Cormorant Garamond', ui-serif, Georgia, serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-swift: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 1rem;
 
-  /* TIAKI palette */
-  --sand-50: hsl(35 30% 98%);
-  --sand-100: hsl(35 30% 94%);
-  --sand-200: hsl(35 25% 90%);
-  --leaf-900: hsl(160 25% 12%);
-  --leaf-800: hsl(160 20% 18%);
-  --leaf-700: hsl(160 18% 28%);
-  --sea-600: hsl(175 35% 45%);
-  --sea-500: hsl(175 30% 55%);
-  --clay: hsl(20 40% 55%);
-  --clay-soft: hsl(20 45% 92%);
+  /* Premium palette */
+  --sand-50: #09090b;               /* base */
+  --sand-100: rgba(255,255,255,0.04); /* glass surface */
+  --sand-200: rgba(255,255,255,0.07);
+  --leaf-900: #f4f4f6;              /* primary text */
+  --leaf-800: rgba(244,244,246,0.62); /* dim */
+  --leaf-700: rgba(244,244,246,0.42); /* mute */
+
+  /* Blue accent — calm, premium, glassy */
+  --sea-500: #7ea9ff;
+  --sea-600: #5a8dff;
+  --blue-glow: rgba(126,169,255,0.35);
+
+  /* Attention — warm gold, not alarming red */
+  --clay: #d9b48c;
+  --clay-soft: rgba(217,180,140,0.14);
 
   /* Shadcn semantic mapping */
   --background: var(--sand-50);
   --foreground: var(--leaf-900);
-  --card: hsl(0 0% 100%);
+  --card: rgba(255,255,255,0.045);
   --card-foreground: var(--leaf-900);
-  --popover: hsl(0 0% 100%);
+  --popover: #121216;
   --popover-foreground: var(--leaf-900);
-  --primary: var(--leaf-900);
-  --primary-foreground: var(--sand-50);
-  --secondary: var(--sand-100);
+  --primary: var(--sea-500);
+  --primary-foreground: #0a0a10;
+  --secondary: rgba(255,255,255,0.06);
   --secondary-foreground: var(--leaf-900);
-  --muted: var(--sand-100);
-  --muted-foreground: hsl(160 12% 40%);
-  --accent: var(--sand-100);
+  --muted: rgba(255,255,255,0.05);
+  --muted-foreground: var(--leaf-800);
+  --accent: rgba(255,255,255,0.06);
   --accent-foreground: var(--leaf-900);
-  --destructive: var(--clay);
-  --destructive-foreground: var(--sand-50);
-  --border: hsl(160 25% 12% / 0.08);
-  --input: hsl(160 25% 12% / 0.12);
-  --ring: var(--sea-600);
+  --destructive: #e0725a;
+  --destructive-foreground: #0a0a10;
+  --border: rgba(255,255,255,0.07);
+  --input: rgba(255,255,255,0.10);
+  --ring: var(--sea-500);
 }
 
 @keyframes tiaki-reveal {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes tiaki-glow-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes tiaki-sheet-in {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tiaki-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @utility animate-reveal {
-  animation: tiaki-reveal 0.8s var(--ease-out-expo) both;
+  animation: tiaki-reveal 0.75s var(--ease-out-expo) both;
+}
+
+@utility animate-sheet-in {
+  animation: tiaki-sheet-in 0.45s var(--ease-swift) both;
+}
+
+@utility animate-fade-in {
+  animation: tiaki-fade-in 0.3s ease-out both;
+}
+
+@utility animate-glow {
+  animation: tiaki-glow-pulse 3.5s ease-in-out infinite;
+}
+
+/* Glass surface — the primary card material */
+@utility glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.05),
+    0 1px 2px 0 rgba(0,0,0,0.4);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+}
+
+@utility glass-strong {
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.08),
+    0 8px 32px -8px rgba(0,0,0,0.6);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+}
+
+/* Blue-lit card — the "Next Up" / hero surface */
+@utility blue-card {
+  background:
+    radial-gradient(120% 100% at 100% 0%, rgba(126,169,255,0.22), transparent 55%),
+    linear-gradient(180deg, rgba(126,169,255,0.10), rgba(126,169,255,0.03));
+  border: 1px solid rgba(126,169,255,0.22);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.08),
+    0 10px 40px -12px rgba(126,169,255,0.35),
+    0 2px 8px -2px rgba(0,0,0,0.5);
+}
+
+@utility gold-tint {
+  background:
+    radial-gradient(120% 100% at 100% 0%, rgba(217,180,140,0.18), transparent 55%),
+    linear-gradient(180deg, rgba(217,180,140,0.08), rgba(217,180,140,0.02));
+  border: 1px solid rgba(217,180,140,0.22);
+}
+
+/* Ambient page background — soft blue glow drifting from the top */
+@utility bg-vault {
+  background:
+    radial-gradient(80% 50% at 50% -10%, rgba(126,169,255,0.14), transparent 70%),
+    radial-gradient(60% 40% at 100% 10%, rgba(126,169,255,0.06), transparent 70%),
+    #09090b;
+}
+
+@utility text-blue {
+  color: var(--sea-500);
 }
 
 @layer base {
@@ -107,10 +193,25 @@
   }
 
   html, body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--sand-50);
+    color: var(--leaf-900);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  ::selection {
+    background: var(--sea-500);
+    color: #0a0a10;
+  }
+
+  /* Native-feeling touch */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input[type="date"] {
+    color-scheme: dark;
   }
 }
