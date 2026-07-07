@@ -14,24 +14,26 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-sand-50 px-6">
+    <div className="flex min-h-screen items-center justify-center bg-vault px-6 text-white">
       <div className="max-w-sm text-center">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-leaf-800/60">
-          404
-        </p>
-        <h1 className="mt-3 font-display text-4xl italic text-leaf-900">
+        <p className="font-mono text-[10px] tracking-[0.22em] text-blue">404</p>
+        <h1 className="mt-3 font-display text-[32px] tracking-tight text-white">
           Not here.
         </h1>
-        <p className="mt-2 text-sm text-leaf-800/60">
+        <p className="mt-2 text-[14px] text-white/55">
           That page doesn't exist — but everything else is safe and where you
           left it.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-full bg-leaf-900 px-5 py-2.5 font-mono text-[11px] uppercase tracking-widest text-sand-50 transition-colors hover:bg-leaf-800"
+            className="inline-flex items-center justify-center rounded-full px-5 py-2.5 font-mono text-[11px] tracking-[0.18em] text-primary-foreground"
+            style={{
+              background: "linear-gradient(180deg, #a8c5ff, #5a8dff)",
+              boxShadow: "0 8px 24px -8px rgba(126,169,255,0.55)",
+            }}
           >
-            Return home
+            RETURN HOME
           </Link>
         </div>
       </div>
@@ -47,15 +49,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-sand-50 px-6">
+    <div className="flex min-h-screen items-center justify-center bg-vault px-6 text-white">
       <div className="max-w-sm text-center">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-clay">
-          Something interrupted
+        <p className="font-mono text-[10px] tracking-[0.22em] text-[color:var(--clay)]">
+          SOMETHING INTERRUPTED
         </p>
-        <h1 className="mt-3 font-display text-3xl italic text-leaf-900">
+        <h1 className="mt-3 font-display text-[28px] tracking-tight text-white">
           Take a breath.
         </h1>
-        <p className="mt-2 text-sm text-leaf-800/60">
+        <p className="mt-2 text-[14px] text-white/55">
           Your data is safe on this device. Try again.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
@@ -64,15 +66,19 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-full bg-leaf-900 px-5 py-2.5 font-mono text-[11px] uppercase tracking-widest text-sand-50 transition-colors hover:bg-leaf-800"
+            className="inline-flex items-center justify-center rounded-full px-5 py-2.5 font-mono text-[11px] tracking-[0.18em] text-primary-foreground"
+            style={{
+              background: "linear-gradient(180deg, #a8c5ff, #5a8dff)",
+              boxShadow: "0 8px 24px -8px rgba(126,169,255,0.55)",
+            }}
           >
-            Try again
+            TRY AGAIN
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-full border border-leaf-900/15 bg-transparent px-5 py-2.5 font-mono text-[11px] uppercase tracking-widest text-leaf-900 transition-colors hover:bg-sand-100"
+            className="inline-flex items-center justify-center rounded-full border border-white/15 px-5 py-2.5 font-mono text-[11px] tracking-[0.18em] text-white/80 transition-colors hover:bg-white/5"
           >
-            Home
+            HOME
           </a>
         </div>
       </div>

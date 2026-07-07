@@ -1,16 +1,16 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { BottomNav } from "@/components/tiaki/BottomNav";
 import { CATEGORY_ICON } from "@/components/tiaki/icons";
+import { ProtectSheet } from "@/components/tiaki/ProtectSheet";
+import { SwipeItem } from "@/components/tiaki/SwipeItem";
 import { useTiakiItems } from "@/hooks/use-tiaki";
 import {
-  CATEGORIES,
-  addItem,
   deleteItem,
   formatDueLabel,
   getCategory,
-  requestNotificationPermission,
   statusForDate,
   type CategoryId,
 } from "@/lib/tiaki-storage";
@@ -23,10 +23,7 @@ function CategoryPage() {
   const { categoryId } = Route.useParams();
   const navigate = useNavigate();
   const items = useTiakiItems();
-  const [adding, setAdding] = useState(false);
-  const [title, setTitle] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [notes, setNotes] = useState("");
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const category = getCategory(categoryId as CategoryId);
 
@@ -34,20 +31,24 @@ function CategoryPage() {
     () =>
       items
         .filter((i) => i.categoryId === categoryId)
-        .sort((a, b) => (a.dueDate || "9999").localeCompare(b.dueDate || "9999")),
+        .sort((a, b) =>
+          (a.dueDate || "9999").localeCompare(b.dueDate || "9999"),
+        ),
     [items, categoryId],
   );
 
   if (!category) {
     return (
-      <div className="flex min-h-screen items-center justify-center px-6">
+      <div className="flex min-h-screen items-center justify-center bg-vault px-6 text-white">
         <div className="text-center">
-          <p className="font-display text-2xl italic">Category not found.</p>
+          <p className="font-display text-[22px] tracking-tight">
+            Category not found.
+          </p>
           <button
             onClick={() => navigate({ to: "/" })}
-            className="mt-4 font-mono text-xs uppercase tracking-widest text-leaf-800/60 underline"
+            className="mt-4 font-mono text-[11px] tracking-[0.18em] text-white/60 underline"
           >
-            Home
+            HOME
           </button>
         </div>
       </div>
@@ -56,178 +57,122 @@ function CategoryPage() {
 
   const Icon = CATEGORY_ICON[category.id];
 
-  function handleAdd(e: React.FormEvent) {
-    e.preventDefault();
-    if (!title.trim()) return;
-    requestNotificationPermission();
-    addItem({
-      categoryId: category!.id,
-      title: title.trim(),
-      dueDate: dueDate || undefined,
-      notes: notes.trim() || undefined,
-    });
-    setTitle("");
-    setDueDate("");
-    setNotes("");
-    setAdding(false);
-  }
-
   return (
-    <div className="min-h-screen bg-sand-50 pb-32 text-leaf-900">
-      <header className="animate-reveal px-6 pt-14 pb-8">
+    <div className="min-h-screen bg-vault pb-36 text-white">
+      <header className="animate-reveal px-6 pt-12 pb-8">
         <button
           onClick={() => navigate({ to: "/" })}
-          className="mb-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-leaf-800/60 transition-colors hover:text-leaf-900"
+          className="mb-6 flex items-center gap-1.5 rounded-full border border-white/8 bg-white/[0.04] px-3 py-1.5 font-mono text-[10px] tracking-[0.18em] text-white/60 backdrop-blur transition-colors hover:text-white"
         >
           <ArrowLeft className="size-3" strokeWidth={2} />
-          Back
+          BACK
         </button>
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-widest text-leaf-800/60">
-              {String(catItems.length).padStart(2, "0")} items
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="font-mono text-[11px] tracking-[0.22em] text-blue">
+              {String(catItems.length).padStart(2, "0")} HELD
             </p>
-            <h1 className="font-display text-5xl italic leading-none">
+            <h1 className="mt-2 font-display text-[36px] leading-none tracking-tight text-white">
               {category.name}
             </h1>
-            <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-leaf-800/40">
+            <p className="mt-2 text-[13px] text-white/50">
               {category.subtitle}
             </p>
           </div>
-          <Icon className="size-8 text-leaf-800/30" strokeWidth={1.25} />
+          <div className="grid size-14 shrink-0 place-items-center rounded-2xl glass">
+            <Icon className="size-6 text-white/70" strokeWidth={1.4} />
+          </div>
         </div>
       </header>
 
-      {/* Items list */}
-      <section className="animate-reveal px-6 [animation-delay:100ms]">
-        {catItems.length === 0 && !adding && (
-          <div className="rounded-3xl border border-dashed border-leaf-900/10 bg-white/40 p-8 text-center">
-            <p className="font-display text-2xl italic text-leaf-800">
-              Nothing here yet.
+      {/* Items */}
+      <section className="animate-reveal px-6" style={{ animationDelay: "80ms" }}>
+        {catItems.length === 0 ? (
+          <div className="rounded-[22px] glass p-8 text-center">
+            <p className="font-display text-[22px] tracking-tight text-white">
+              Nothing held here yet.
             </p>
-            <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-leaf-800/40">
-              Set it once. Tiaki remembers.
+            <p className="mt-2 font-mono text-[11px] tracking-[0.18em] text-white/45">
+              SET IT ONCE · TIAKI REMEMBERS
             </p>
+            <button
+              onClick={() => setSheetOpen(true)}
+              className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2.5 font-mono text-[11px] tracking-[0.18em] text-primary-foreground"
+              style={{
+                background: "linear-gradient(180deg, #a8c5ff, #5a8dff)",
+                boxShadow: "0 6px 16px -6px rgba(126,169,255,0.55)",
+              }}
+            >
+              <Plus className="size-3.5" strokeWidth={2.25} />
+              PROTECT SOMETHING
+            </button>
           </div>
-        )}
-
-        <ul className="space-y-3">
-          {catItems.map((item) => {
-            const status = statusForDate(item.dueDate);
-            const dot =
-              status === "attention"
-                ? "bg-clay"
-                : status === "soon"
-                  ? "bg-sea-500"
-                  : "bg-leaf-800/20";
-            return (
-              <li
-                key={item.id}
-                className="group flex items-start justify-between gap-4 rounded-2xl border border-leaf-900/5 bg-white p-5"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className={`size-1.5 rounded-full ${dot}`} />
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-leaf-800/50">
-                      {formatDueLabel(item.dueDate)}
-                    </span>
-                  </div>
-                  <p className="truncate font-display text-xl leading-tight">
-                    {item.title}
-                  </p>
-                  {item.notes && (
-                    <p className="mt-1 line-clamp-2 text-sm text-leaf-800/60">
-                      {item.notes}
-                    </p>
-                  )}
-                </div>
-                <button
-                  onClick={() => deleteItem(item.id)}
-                  className="shrink-0 rounded-full p-2 text-leaf-800/30 opacity-0 transition-all hover:bg-clay/10 hover:text-clay group-hover:opacity-100"
-                  aria-label="Delete"
-                >
-                  <Trash2 className="size-4" strokeWidth={1.5} />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      {/* Add form / trigger */}
-      <section className="mt-6 px-6">
-        {adding ? (
-          <form
-            onSubmit={handleAdd}
-            className="animate-reveal rounded-3xl border border-leaf-900/5 bg-white p-5"
-          >
-            <p className="mb-4 font-mono text-[10px] uppercase tracking-widest text-leaf-800/40">
-              New in {category.name}
-            </p>
-            <input
-              autoFocus
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="What should Tiaki look after?"
-              className="w-full border-b border-leaf-900/10 bg-transparent pb-3 font-display text-2xl italic placeholder:text-leaf-800/25 focus:border-leaf-900 focus:outline-none"
-            />
-            <div className="mt-4 space-y-3">
-              <label className="block">
-                <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-leaf-800/40">
-                  Due date (optional)
-                </span>
-                <input
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full rounded-lg border border-leaf-900/10 bg-sand-50 px-3 py-2 font-mono text-sm focus:border-leaf-900 focus:outline-none"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-leaf-800/40">
-                  Notes (optional)
-                </span>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={2}
-                  className="w-full resize-none rounded-lg border border-leaf-900/10 bg-sand-50 px-3 py-2 text-sm focus:border-leaf-900 focus:outline-none"
-                />
-              </label>
-            </div>
-            <div className="mt-5 flex gap-2">
-              <button
-                type="submit"
-                className="flex-1 rounded-full bg-leaf-900 py-3 font-mono text-[11px] uppercase tracking-widest text-sand-50 transition-colors hover:bg-leaf-800"
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={() => setAdding(false)}
-                className="rounded-full border border-leaf-900/10 px-5 py-3 font-mono text-[11px] uppercase tracking-widest text-leaf-800/60 transition-colors hover:bg-sand-100"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
         ) : (
-          <button
-            onClick={() => setAdding(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-3xl border border-dashed border-leaf-900/15 bg-transparent py-6 font-mono text-[11px] uppercase tracking-widest text-leaf-800/60 transition-colors hover:bg-white hover:text-leaf-900"
-          >
-            <Plus className="size-4" strokeWidth={1.5} />
-            Add to {category.name}
-          </button>
+          <>
+            <p className="mb-3 font-mono text-[10px] tracking-[0.22em] text-white/40">
+              SWIPE LEFT TO REMOVE
+            </p>
+            <ul className="space-y-2">
+              <AnimatePresence initial={false}>
+                {catItems.map((item) => {
+                  const status = statusForDate(item.dueDate);
+                  const accent =
+                    status === "attention"
+                      ? "text-[color:var(--clay)]"
+                      : status === "soon"
+                        ? "text-blue"
+                        : "text-white/40";
+                  const dot =
+                    status === "attention"
+                      ? "bg-[color:var(--clay)]"
+                      : status === "soon"
+                        ? "bg-[color:var(--sea-500)]"
+                        : "bg-white/15";
+                  return (
+                    <motion.li
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -80, transition: { duration: 0.2 } }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <SwipeItem onDelete={() => deleteItem(item.id)}>
+                        <div className="rounded-2xl glass px-4 py-4">
+                          <div className="mb-1.5 flex items-center gap-2">
+                            <span className={`size-1.5 rounded-full ${dot}`} />
+                            <span
+                              className={`font-mono text-[10px] tracking-[0.18em] ${accent}`}
+                            >
+                              {formatDueLabel(item.dueDate).toUpperCase()}
+                            </span>
+                          </div>
+                          <p className="text-[16px] font-medium tracking-tight text-white">
+                            {item.title}
+                          </p>
+                          {item.notes && (
+                            <p className="mt-1 line-clamp-2 text-[13px] text-white/55">
+                              {item.notes}
+                            </p>
+                          )}
+                        </div>
+                      </SwipeItem>
+                    </motion.li>
+                  );
+                })}
+              </AnimatePresence>
+            </ul>
+          </>
         )}
       </section>
+
+      <ProtectSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        defaultCategory={category.id}
+      />
 
       <BottomNav />
     </div>
   );
 }
-
-// Small hint so the categories list is available for future filtering.
-export const _categories = CATEGORIES;
-// avoid unused-import lints while keeping Link import ready for future use
-export const _link = Link;
