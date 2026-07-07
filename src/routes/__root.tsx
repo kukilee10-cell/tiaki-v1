@@ -94,19 +94,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { name: "theme-color", content: "#faf8f4" },
-      { title: "Tiaki — Set it once. Let Tiaki do the rest." },
+      { name: "theme-color", content: "#09090b" },
+      { title: "Tiaki — Your Life Vault" },
       {
         name: "description",
         content:
-          "Tiaki is a calm, offline-first personal life dashboard. Care for your documents, vehicles, home, family, pets and more — all in one quiet place.",
+          "Tiaki quietly protects the important parts of your life. A calm, offline-first Life Vault for documents, vehicles, home, family and more.",
       },
       { name: "author", content: "Tiaki" },
-      { property: "og:title", content: "Tiaki" },
+      { property: "og:title", content: "Tiaki — Your Life Vault" },
       {
         property: "og:description",
         content:
-          "Set it once. Let Tiaki do the rest. A calm personal life dashboard.",
+          "Set it once. Let Tiaki do the rest. A calm, premium Life Vault that quietly protects the important parts of your life.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -122,7 +122,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
       },
     ],
   }),
