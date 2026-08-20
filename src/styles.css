@@ -4,18 +4,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* TIAKI — Premium Life Vault
- * Dark base, glass surfaces, soft blue glow, warm gold for attention.
- * Inspired by Notion Calendar, Arc, Linear, and Apple's system apps.
+/* ROTATION CO. — WAREHOUSE & INVENTORY
+ * Black • Steel • Hi-Vis • Industrial
  */
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -37,207 +36,136 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* TIAKI semantic tokens — legacy names, premium dark values */
-  --color-sand-50: var(--sand-50);   /* app base */
-  --color-sand-100: var(--sand-100); /* surface / glass */
-  --color-sand-200: var(--sand-200); /* elevated */
-  --color-leaf-900: var(--leaf-900); /* primary text (white) */
-  --color-leaf-800: var(--leaf-800); /* dim text */
-  --color-leaf-700: var(--leaf-700); /* mute text */
-  --color-sea-600: var(--sea-600);   /* deep blue */
-  --color-sea-500: var(--sea-500);   /* accent blue */
-  --color-clay: var(--clay);         /* attention (warm gold) */
-  --color-clay-soft: var(--clay-soft);
+  /* Industrial palette */
+  --color-steel-950: var(--steel-950); /* app base */
+  --color-steel-900: var(--steel-900); /* panel */
+  --color-steel-800: var(--steel-800); /* raised panel */
+  --color-steel-700: var(--steel-700); /* borders / dividers */
+  --color-steel-400: var(--steel-400); /* muted text */
+  --color-hivis: var(--hivis);
+  --color-hivis-dim: var(--hivis-dim);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-crit: var(--crit);
+  --color-info: var(--info);
 
-  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-display: 'Oswald', 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-swift: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root {
-  --radius: 1rem;
+  --radius: 4px;
 
-  /* Premium palette */
-  --sand-50: #09090b;               /* base */
-  --sand-100: rgba(255,255,255,0.04); /* glass surface */
-  --sand-200: rgba(255,255,255,0.07);
-  --leaf-900: #f4f4f6;              /* primary text */
-  --leaf-800: rgba(244,244,246,0.62); /* dim */
-  --leaf-700: rgba(244,244,246,0.42); /* mute */
+  --steel-950: #0b0c0d;
+  --steel-900: #141618;
+  --steel-800: #1c1f22;
+  --steel-700: #2b3034;
+  --steel-400: #8b949b;
 
-  /* Blue accent — calm, premium, glassy */
-  --sea-500: #7ea9ff;
-  --sea-600: #5a8dff;
-  --blue-glow: rgba(126,169,255,0.35);
+  --hivis: #fd5601;
+  --hivis-dim: rgba(253, 86, 1, 0.14);
 
-  /* Attention — warm gold, not alarming red */
-  --clay: #d9b48c;
-  --clay-soft: rgba(217,180,140,0.14);
+  --ok: #3fbf6a;
+  --warn: #f5a524;
+  --crit: #e5484d;
+  --info: #4a90e2;
 
-  /* Shadcn semantic mapping */
-  --background: var(--sand-50);
-  --foreground: var(--leaf-900);
-  --card: rgba(255,255,255,0.045);
-  --card-foreground: var(--leaf-900);
-  --popover: #121216;
-  --popover-foreground: var(--leaf-900);
-  --primary: var(--sea-500);
-  --primary-foreground: #0a0a10;
-  --secondary: rgba(255,255,255,0.06);
-  --secondary-foreground: var(--leaf-900);
-  --muted: rgba(255,255,255,0.05);
-  --muted-foreground: var(--leaf-800);
-  --accent: rgba(255,255,255,0.06);
-  --accent-foreground: var(--leaf-900);
-  --destructive: #e0725a;
-  --destructive-foreground: #0a0a10;
-  --border: rgba(255,255,255,0.07);
-  --input: rgba(255,255,255,0.10);
-  --ring: var(--sea-500);
+  --background: var(--steel-950);
+  --foreground: #e9edf0;
+  --card: var(--steel-900);
+  --card-foreground: #e9edf0;
+  --popover: var(--steel-900);
+  --popover-foreground: #e9edf0;
+  --primary: var(--hivis);
+  --primary-foreground: #0b0c0d;
+  --secondary: var(--steel-800);
+  --secondary-foreground: #e9edf0;
+  --muted: var(--steel-800);
+  --muted-foreground: var(--steel-400);
+  --accent: var(--steel-800);
+  --accent-foreground: #e9edf0;
+  --destructive: var(--crit);
+  --destructive-foreground: #0b0c0d;
+  --border: var(--steel-700);
+  --input: var(--steel-700);
+  --ring: var(--hivis);
 }
 
-@keyframes tiaki-reveal {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Flat industrial panel */
+@utility panel {
+  background: var(--steel-900);
+  border: 1px solid var(--steel-700);
+  border-radius: 4px;
 }
 
-@keyframes tiaki-glow-pulse {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 0.85; }
+/* Raised / lit panel */
+@utility panel-raised {
+  background: linear-gradient(180deg, var(--steel-800), var(--steel-900));
+  border: 1px solid var(--steel-700);
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 }
 
-@keyframes tiaki-sheet-in {
-  from { opacity: 0; transform: translateY(100%); }
-  to { opacity: 1; transform: translateY(0); }
+/* Recessed well */
+@utility panel-recessed {
+  background: #0e1011;
+  border: 1px solid #202427;
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
-@keyframes tiaki-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@utility hivis-edge {
+  border-left: 3px solid var(--hivis);
 }
 
-@utility animate-reveal {
-  animation: tiaki-reveal 0.75s var(--ease-out-expo) both;
-}
-
-@utility animate-sheet-in {
-  animation: tiaki-sheet-in 0.45s var(--ease-swift) both;
-}
-
-@utility animate-fade-in {
-  animation: tiaki-fade-in 0.3s ease-out both;
-}
-
-@utility animate-glow {
-  animation: tiaki-glow-pulse 3.5s ease-in-out infinite;
-}
-
-/* Glass surface — the primary card material */
-@utility glass {
-  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255,255,255,0.05),
-    0 1px 2px 0 rgba(0,0,0,0.4);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-}
-
-@utility glass-strong {
-  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
-  border: 1px solid rgba(255,255,255,0.09);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255,255,255,0.08),
-    0 8px 32px -8px rgba(0,0,0,0.6);
-  backdrop-filter: blur(28px) saturate(160%);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
-}
-
-/* Blue-lit card — the "Next Up" / hero surface */
-@utility blue-card {
-  background:
-    radial-gradient(120% 100% at 100% 0%, rgba(126,169,255,0.22), transparent 55%),
-    linear-gradient(180deg, rgba(126,169,255,0.10), rgba(126,169,255,0.03));
-  border: 1px solid rgba(126,169,255,0.22);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255,255,255,0.08),
-    0 10px 40px -12px rgba(126,169,255,0.35),
-    0 2px 8px -2px rgba(0,0,0,0.5);
-}
-
-@utility gold-tint {
-  background:
-    radial-gradient(120% 100% at 100% 0%, rgba(217,180,140,0.18), transparent 55%),
-    linear-gradient(180deg, rgba(217,180,140,0.08), rgba(217,180,140,0.02));
-  border: 1px solid rgba(217,180,140,0.22);
-}
-
-/* Iridescent halo — the wow effect. Sits behind the hero card. */
-@utility halo-hero {
-  background: conic-gradient(
-    from 140deg at 50% 50%,
-    rgba(126,169,255,0.55),
-    rgba(170,120,255,0.55),
-    rgba(255,180,120,0.45),
-    rgba(120,235,190,0.50),
-    rgba(126,169,255,0.55)
+/* Diagonal safety-stripe marker */
+@utility hazard-bar {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--hivis) 0 6px,
+    #0b0c0d 6px 12px
   );
-  filter: blur(28px) saturate(140%);
-  opacity: 0.55;
 }
 
-/* Ambient page background — warm iridescent mesh drifting behind everything */
-@utility bg-vault {
-  background:
-    radial-gradient(60% 40% at 8% 4%, rgba(170,120,255,0.18), transparent 65%),
-    radial-gradient(55% 42% at 92% 12%, rgba(126,169,255,0.20), transparent 65%),
-    radial-gradient(70% 45% at 100% 55%, rgba(120,235,190,0.10), transparent 70%),
-    radial-gradient(60% 40% at 0% 70%, rgba(255,180,120,0.10), transparent 70%),
-    #060609;
+@utility label-industrial {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--steel-400);
 }
 
-@utility text-blue {
-  color: var(--sea-500);
+@utility num-xl {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
-
-@keyframes tiaki-halo-drift {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.08); }
-}
-
-@utility animate-halo {
-  animation: tiaki-halo-drift 18s ease-in-out infinite;
-}
-
 
 @layer base {
   * {
     border-color: var(--color-border);
-  }
-
-  html, body {
-    background-color: var(--sand-50);
-    color: var(--leaf-900);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    font-feature-settings: "ss01", "cv11";
-  }
-
-  ::selection {
-    background: var(--sea-500);
-    color: #0a0a10;
-  }
-
-  /* Native-feeling touch */
-  * {
     -webkit-tap-highlight-color: transparent;
   }
 
-  input[type="date"] {
+  html,
+  body {
+    background-color: var(--steel-950);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--hivis);
+    color: #0b0c0d;
+  }
+
+  input,
+  select,
+  textarea {
     color-scheme: dark;
   }
 }
