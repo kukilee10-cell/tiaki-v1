@@ -9,31 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UpcomingRouteImport } from './routes/upcoming'
 import { Route as StockRouteImport } from './routes/stock'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SalesRouteImport } from './routes/sales'
 import { Route as InboundRouteImport } from './routes/inbound'
 import { Route as DocumentsRouteImport } from './routes/documents'
-import { Route as AllRouteImport } from './routes/all'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StockIndexRouteImport } from './routes/stock.index'
 import { Route as StockProductIdRouteImport } from './routes/stock.$productId'
-import { Route as CategoryCategoryIdRouteImport } from './routes/category.$categoryId'
 
-const UpcomingRoute = UpcomingRouteImport.update({
-  id: '/upcoming',
-  path: '/upcoming',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const StockRoute = StockRouteImport.update({
   id: '/stock',
   path: '/stock',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SalesRoute = SalesRouteImport.update({
@@ -51,11 +37,6 @@ const DocumentsRoute = DocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AllRoute = AllRouteImport.update({
-  id: '/all',
-  path: '/all',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -71,48 +52,31 @@ const StockProductIdRoute = StockProductIdRouteImport.update({
   path: '/$productId',
   getParentRoute: () => StockRoute,
 } as any)
-const CategoryCategoryIdRoute = CategoryCategoryIdRouteImport.update({
-  id: '/category/$categoryId',
-  path: '/category/$categoryId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/all': typeof AllRoute
   '/documents': typeof DocumentsRoute
   '/inbound': typeof InboundRoute
   '/sales': typeof SalesRoute
-  '/settings': typeof SettingsRoute
   '/stock': typeof StockRouteWithChildren
-  '/upcoming': typeof UpcomingRoute
-  '/category/$categoryId': typeof CategoryCategoryIdRoute
   '/stock/$productId': typeof StockProductIdRoute
   '/stock/': typeof StockIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/all': typeof AllRoute
   '/documents': typeof DocumentsRoute
   '/inbound': typeof InboundRoute
   '/sales': typeof SalesRoute
-  '/settings': typeof SettingsRoute
-  '/upcoming': typeof UpcomingRoute
-  '/category/$categoryId': typeof CategoryCategoryIdRoute
   '/stock/$productId': typeof StockProductIdRoute
   '/stock': typeof StockIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/all': typeof AllRoute
   '/documents': typeof DocumentsRoute
   '/inbound': typeof InboundRoute
   '/sales': typeof SalesRoute
-  '/settings': typeof SettingsRoute
   '/stock': typeof StockRouteWithChildren
-  '/upcoming': typeof UpcomingRoute
-  '/category/$categoryId': typeof CategoryCategoryIdRoute
   '/stock/$productId': typeof StockProductIdRoute
   '/stock/': typeof StockIndexRoute
 }
@@ -120,76 +84,46 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/all'
     | '/documents'
     | '/inbound'
     | '/sales'
-    | '/settings'
     | '/stock'
-    | '/upcoming'
-    | '/category/$categoryId'
     | '/stock/$productId'
     | '/stock/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/all'
     | '/documents'
     | '/inbound'
     | '/sales'
-    | '/settings'
-    | '/upcoming'
-    | '/category/$categoryId'
     | '/stock/$productId'
     | '/stock'
   id:
     | '__root__'
     | '/'
-    | '/all'
     | '/documents'
     | '/inbound'
     | '/sales'
-    | '/settings'
     | '/stock'
-    | '/upcoming'
-    | '/category/$categoryId'
     | '/stock/$productId'
     | '/stock/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AllRoute: typeof AllRoute
   DocumentsRoute: typeof DocumentsRoute
   InboundRoute: typeof InboundRoute
   SalesRoute: typeof SalesRoute
-  SettingsRoute: typeof SettingsRoute
   StockRoute: typeof StockRouteWithChildren
-  UpcomingRoute: typeof UpcomingRoute
-  CategoryCategoryIdRoute: typeof CategoryCategoryIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/upcoming': {
-      id: '/upcoming'
-      path: '/upcoming'
-      fullPath: '/upcoming'
-      preLoaderRoute: typeof UpcomingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/stock': {
       id: '/stock'
       path: '/stock'
       fullPath: '/stock'
       preLoaderRoute: typeof StockRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sales': {
@@ -213,13 +147,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/all': {
-      id: '/all'
-      path: '/all'
-      fullPath: '/all'
-      preLoaderRoute: typeof AllRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -241,13 +168,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StockProductIdRouteImport
       parentRoute: typeof StockRoute
     }
-    '/category/$categoryId': {
-      id: '/category/$categoryId'
-      path: '/category/$categoryId'
-      fullPath: '/category/$categoryId'
-      preLoaderRoute: typeof CategoryCategoryIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -265,14 +185,10 @@ const StockRouteWithChildren = StockRoute._addFileChildren(StockRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AllRoute: AllRoute,
   DocumentsRoute: DocumentsRoute,
   InboundRoute: InboundRoute,
   SalesRoute: SalesRoute,
-  SettingsRoute: SettingsRoute,
   StockRoute: StockRouteWithChildren,
-  UpcomingRoute: UpcomingRoute,
-  CategoryCategoryIdRoute: CategoryCategoryIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
