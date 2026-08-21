@@ -4,7 +4,7 @@ import { Plus, Search } from "lucide-react";
 import { Screen, SectionTitle, Stat, StatusTag } from "@/components/rotation/Chrome";
 import { ItemForm, Modal } from "@/components/rotation/Actions";
 import { useProducts } from "@/hooks/use-stock";
-import { money, statusFor, totals } from "@/lib/stock-storage";
+import { money, totals } from "@/lib/stock-storage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -123,7 +123,6 @@ function Dashboard() {
         )}
       </div>
 
-      {statusFor && null}
 
       <Modal open={add} title="Add Item" onClose={() => setAdd(false)}>
         <ItemForm onDone={() => setAdd(false)} />
