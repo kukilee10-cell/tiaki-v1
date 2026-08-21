@@ -24,20 +24,16 @@ export const Route = createFileRoute("/stock/")({
   component: StockList,
 });
 
-const FILTERS = ["ALL", "LOW", "OUT"] as const;
-
 function StockList() {
   const products = useProducts();
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("ALL");
+  const [lowOnly, setLowOnly] = useState(false);
 
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase();
     return products
       .filter((p) => {
-        const s = statusFor(p);
-        if (filter === "LOW" && s !== "low") return false;
-        if (filter === "OUT" && s !== "out") return false;
+        if (lowOnly && statusFor(p) === "in_stock") return false;
         return (
           !term ||
           p.name.toLowerCase().includes(term) ||
@@ -46,9 +42,7 @@ function StockList() {
         );
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [products, q, filter]);
-
-  const t = totals(rows);
+  }, [products, q, lowOnly]);
 
   return (
     <Screen sub="Stock Register">
@@ -57,33 +51,29 @@ function StockList() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="SEARCH SKU / DESCRIPTION / BIN"
+          placeholder="SEARCH"
           className="w-full bg-transparent font-mono text-[11px] uppercase tracking-[0.08em] outline-none placeholder:text-steel-400"
         />
       </div>
 
-      <div className="mt-2 flex gap-1.5">
-        {FILTERS.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className="rounded-[2px] border px-2.5 py-1.5 font-mono text-[10px] tracking-[0.12em]"
-            style={{
-              borderColor: filter === f ? "var(--hivis)" : "var(--steel-700)",
-              color: filter === f ? "var(--hivis)" : "var(--steel-400)",
-              background: filter === f ? "var(--hivis-dim)" : "transparent",
-            }}
-          >
-            {f}
-          </button>
-        ))}
-        <span className="ml-auto self-center font-mono text-[10px] tracking-[0.12em] text-steel-400">
-          {rows.length} LINES · {money(t.value)}
+      <div className="mt-2 flex items-center justify-between">
+        <button
+          onClick={() => setLowOnly((v) => !v)}
+          className="rounded-[2px] border px-2.5 py-1.5 font-mono text-[10px] tracking-[0.12em]"
+          style={{
+            borderColor: lowOnly ? "var(--hivis)" : "var(--steel-700)",
+            color: lowOnly ? "var(--hivis)" : "var(--steel-400)",
+            background: lowOnly ? "var(--hivis-dim)" : "transparent",
+          }}
+        >
+          NEEDS ATTENTION
+        </button>
+        <span className="font-mono text-[10px] tracking-[0.12em] text-steel-400">
+          {rows.length} LINES
         </span>
       </div>
 
       <div className="mt-4">
-        <SectionTitle>Line Items</SectionTitle>
         {rows.length === 0 ? (
           <p className="panel px-3 py-4 font-mono text-[11px] text-steel-400">
             NO MATCHING LINES.
@@ -99,18 +89,12 @@ function StockList() {
               >
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[13px] font-medium">{p.name}</p>
-                  <p className="label-industrial mt-1">
-                    {p.sku}
-                    {p.bin ? ` · BIN ${p.bin}` : ""}
-                  </p>
-                  <div className="mt-1.5">
-                    <StatusTag product={p} />
-                  </div>
+                  <p className="label-industrial mt-1">{p.sku}</p>
                 </div>
-                <div className="text-right">
-                  <p className="num-xl text-[24px] leading-none">{p.onHand}</p>
-                  <p className="label-industrial mt-1">{money(p.onHand * p.unitCost)}</p>
-                </div>
+                {statusFor(p) !== "in_stock" && <StatusTag product={p} />}
+                <p className="num-xl w-12 text-right text-[24px] leading-none">
+                  {p.onHand}
+                </p>
               </Link>
             ))}
           </div>
@@ -119,3 +103,4 @@ function StockList() {
     </Screen>
   );
 }
+
