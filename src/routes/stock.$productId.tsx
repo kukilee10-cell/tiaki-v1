@@ -132,7 +132,7 @@ function ProductRecord() {
       {product.notes && (
         <div className="panel mt-2 px-3 py-3">
           <p className="label-industrial">Notes</p>
-          <p className="mt-1 text-[13px] text-steel-200">{product.notes}</p>
+          <p className="mt-1 text-[13px] text-foreground">{product.notes}</p>
         </div>
       )}
 
