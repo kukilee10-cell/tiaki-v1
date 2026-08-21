@@ -89,7 +89,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Industrial stock control for Rotation Co. — track units on hand, stock value, inbound deliveries, sales and dockets.",
+          "Industrial stock control for Rotation Co. — track units on hand, stock value, sales and dockets.",
       },
       { name: "author", content: "Rotation Co." },
       { property: "og:title", content: "Rotation Co. — Warehouse & Inventory" },

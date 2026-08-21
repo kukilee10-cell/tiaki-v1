@@ -12,13 +12,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Operational stock dashboard for Rotation Co. — units on hand, stock value, low-stock alerts and inbound deliveries.",
+          "Operational stock dashboard for Rotation Co. — units on hand, stock value and low-stock alerts.",
       },
       { property: "og:title", content: "Rotation Co. Warehouse & Inventory" },
       {
         property: "og:description",
         content:
-          "Industrial stock control terminal: units on hand, stock value, low stock and inbound deliveries.",
+          "Industrial stock control terminal: units on hand, stock value and low stock.",
       },
     ],
   }),
