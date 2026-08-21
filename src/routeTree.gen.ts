@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StockRouteImport } from './routes/stock'
 import { Route as SalesRouteImport } from './routes/sales'
-import { Route as InboundRouteImport } from './routes/inbound'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StockIndexRouteImport } from './routes/stock.index'
@@ -25,11 +24,6 @@ const StockRoute = StockRouteImport.update({
 const SalesRoute = SalesRouteImport.update({
   id: '/sales',
   path: '/sales',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InboundRoute = InboundRouteImport.update({
-  id: '/inbound',
-  path: '/inbound',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentsRoute = DocumentsRouteImport.update({
@@ -56,7 +50,6 @@ const StockProductIdRoute = StockProductIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/documents': typeof DocumentsRoute
-  '/inbound': typeof InboundRoute
   '/sales': typeof SalesRoute
   '/stock': typeof StockRouteWithChildren
   '/stock/$productId': typeof StockProductIdRoute
@@ -65,7 +58,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/documents': typeof DocumentsRoute
-  '/inbound': typeof InboundRoute
   '/sales': typeof SalesRoute
   '/stock/$productId': typeof StockProductIdRoute
   '/stock': typeof StockIndexRoute
@@ -74,7 +66,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/documents': typeof DocumentsRoute
-  '/inbound': typeof InboundRoute
   '/sales': typeof SalesRoute
   '/stock': typeof StockRouteWithChildren
   '/stock/$productId': typeof StockProductIdRoute
@@ -85,24 +76,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/documents'
-    | '/inbound'
     | '/sales'
     | '/stock'
     | '/stock/$productId'
     | '/stock/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/documents'
-    | '/inbound'
-    | '/sales'
-    | '/stock/$productId'
-    | '/stock'
+  to: '/' | '/documents' | '/sales' | '/stock/$productId' | '/stock'
   id:
     | '__root__'
     | '/'
     | '/documents'
-    | '/inbound'
     | '/sales'
     | '/stock'
     | '/stock/$productId'
@@ -112,7 +95,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DocumentsRoute: typeof DocumentsRoute
-  InboundRoute: typeof InboundRoute
   SalesRoute: typeof SalesRoute
   StockRoute: typeof StockRouteWithChildren
 }
@@ -131,13 +113,6 @@ declare module '@tanstack/react-router' {
       path: '/sales'
       fullPath: '/sales'
       preLoaderRoute: typeof SalesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inbound': {
-      id: '/inbound'
-      path: '/inbound'
-      fullPath: '/inbound'
-      preLoaderRoute: typeof InboundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/documents': {
@@ -186,7 +161,6 @@ const StockRouteWithChildren = StockRoute._addFileChildren(StockRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DocumentsRoute: DocumentsRoute,
-  InboundRoute: InboundRoute,
   SalesRoute: SalesRoute,
   StockRoute: StockRouteWithChildren,
 }

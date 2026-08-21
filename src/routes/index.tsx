@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertTriangle, ChevronRight, Truck } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Screen, SectionTitle, Stat, StatusTag } from "@/components/rotation/Chrome";
 import { QuickActions } from "@/components/rotation/Actions";
-import { useInbound, useProducts } from "@/hooks/use-stock";
-import { INBOUND_STATUS_LABEL, money, statusFor, totals } from "@/lib/stock-storage";
+import { useProducts } from "@/hooks/use-stock";
+import { money, statusFor, totals } from "@/lib/stock-storage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -12,13 +12,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Operational stock dashboard for Rotation Co. — units on hand, stock value, low-stock alerts and inbound deliveries.",
+          "Operational stock dashboard for Rotation Co. — units on hand, stock value and low-stock alerts.",
       },
       { property: "og:title", content: "Rotation Co. Warehouse & Inventory" },
       {
         property: "og:description",
         content:
-          "Industrial stock control terminal: units on hand, stock value, low stock and inbound deliveries.",
+          "Industrial stock control terminal: units on hand, stock value and low stock.",
       },
     ],
   }),
@@ -27,12 +27,10 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
   const products = useProducts();
-  const inbound = useInbound();
   const t = totals(products);
   const attention = products
     .filter((p) => statusFor(p) !== "in_stock")
     .sort((a, b) => a.onHand - b.onHand);
-  const enRoute = inbound.filter((o) => o.status !== "received");
 
   return (
     <Screen sub="Warehouse & Inventory">
@@ -84,38 +82,6 @@ function Dashboard() {
         )}
       </div>
 
-      {enRoute.length > 0 && (
-        <div className="mt-6">
-          <SectionTitle
-            right={
-              <Link to="/inbound" className="font-mono text-[10px] tracking-[0.12em] text-hivis">
-                ALL INBOUND
-              </Link>
-            }
-          >
-            Stock On Order
-          </SectionTitle>
-          <div className="panel divide-y divide-steel-700">
-            {enRoute.slice(0, 3).map((o) => (
-              <Link
-                key={o.id}
-                to="/inbound"
-                className="flex items-center gap-3 px-3 py-3 active:bg-steel-800"
-              >
-                <Truck className="size-4 shrink-0 text-hivis" strokeWidth={1.9} />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-mono text-[12px] tracking-[0.06em]">{o.ref}</p>
-                  <p className="label-industrial mt-0.5">
-                    {o.supplier}
-                    {o.eta ? ` · ETA ${o.eta}` : ""}
-                  </p>
-                </div>
-                <ChevronRight className="size-4 text-steel-400" />
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
     </Screen>
   );
 }
