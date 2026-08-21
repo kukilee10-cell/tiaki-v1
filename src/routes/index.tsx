@@ -93,7 +93,7 @@ function Dashboard() {
               </Link>
             }
           >
-            Arriving
+            Stock On Order
           </SectionTitle>
           <div className="panel divide-y divide-steel-700">
             {enRoute.slice(0, 3).map((o) => (
@@ -105,7 +105,10 @@ function Dashboard() {
                 <Truck className="size-4 shrink-0 text-hivis" strokeWidth={1.9} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-mono text-[12px] tracking-[0.06em]">{o.ref}</p>
-                  <p className="label-industrial mt-0.5">{o.supplier}</p>
+                  <p className="label-industrial mt-0.5">
+                    {o.supplier}
+                    {o.eta ? ` · ETA ${o.eta}` : ""}
+                  </p>
                 </div>
                 <ChevronRight className="size-4 text-steel-400" />
               </Link>
