@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { Screen, SectionTitle, StatusTag } from "@/components/rotation/Chrome";
+import { Screen, StatusTag } from "@/components/rotation/Chrome";
 import { useProducts } from "@/hooks/use-stock";
-import { money, statusFor, totals } from "@/lib/stock-storage";
+import { statusFor } from "@/lib/stock-storage";
 
 export const Route = createFileRoute("/stock/")({
   head: () => ({
