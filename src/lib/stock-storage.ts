@@ -182,6 +182,25 @@ export function applyMovement(
   logMovement(productId, type, signed, ref);
 }
 
+export function deleteInbound(id: string) {
+  write(
+    INBOUND_KEY,
+    loadInbound().filter((o) => o.id !== id),
+  );
+}
+
+export function newInbound(
+  data: Omit<InboundOrder, "id" | "createdAt">,
+): InboundOrder {
+  const order: InboundOrder = {
+    ...data,
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+  };
+  write(INBOUND_KEY, [...loadInbound(), order]);
+  return order;
+}
+
 export function saveInbound(order: InboundOrder) {
   const rows = loadInbound();
   const i = rows.findIndex((o) => o.id === order.id);
