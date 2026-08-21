@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StockRouteImport } from './routes/stock'
-import { Route as SalesRouteImport } from './routes/sales'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StockIndexRouteImport } from './routes/stock.index'
@@ -19,11 +18,6 @@ import { Route as StockProductIdRouteImport } from './routes/stock.$productId'
 const StockRoute = StockRouteImport.update({
   id: '/stock',
   path: '/stock',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SalesRoute = SalesRouteImport.update({
-  id: '/sales',
-  path: '/sales',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentsRoute = DocumentsRouteImport.update({
@@ -50,7 +44,6 @@ const StockProductIdRoute = StockProductIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/documents': typeof DocumentsRoute
-  '/sales': typeof SalesRoute
   '/stock': typeof StockRouteWithChildren
   '/stock/$productId': typeof StockProductIdRoute
   '/stock/': typeof StockIndexRoute
@@ -58,7 +51,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/documents': typeof DocumentsRoute
-  '/sales': typeof SalesRoute
   '/stock/$productId': typeof StockProductIdRoute
   '/stock': typeof StockIndexRoute
 }
@@ -66,27 +58,19 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/documents': typeof DocumentsRoute
-  '/sales': typeof SalesRoute
   '/stock': typeof StockRouteWithChildren
   '/stock/$productId': typeof StockProductIdRoute
   '/stock/': typeof StockIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/documents'
-    | '/sales'
-    | '/stock'
-    | '/stock/$productId'
-    | '/stock/'
+  fullPaths: '/' | '/documents' | '/stock' | '/stock/$productId' | '/stock/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/documents' | '/sales' | '/stock/$productId' | '/stock'
+  to: '/' | '/documents' | '/stock/$productId' | '/stock'
   id:
     | '__root__'
     | '/'
     | '/documents'
-    | '/sales'
     | '/stock'
     | '/stock/$productId'
     | '/stock/'
@@ -95,7 +79,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DocumentsRoute: typeof DocumentsRoute
-  SalesRoute: typeof SalesRoute
   StockRoute: typeof StockRouteWithChildren
 }
 
@@ -106,13 +89,6 @@ declare module '@tanstack/react-router' {
       path: '/stock'
       fullPath: '/stock'
       preLoaderRoute: typeof StockRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sales': {
-      id: '/sales'
-      path: '/sales'
-      fullPath: '/sales'
-      preLoaderRoute: typeof SalesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/documents': {
@@ -161,7 +137,6 @@ const StockRouteWithChildren = StockRoute._addFileChildren(StockRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DocumentsRoute: DocumentsRoute,
-  SalesRoute: SalesRoute,
   StockRoute: StockRouteWithChildren,
 }
 export const routeTree = rootRouteImport

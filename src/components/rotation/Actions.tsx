@@ -1,84 +1,20 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { X } from "lucide-react";
 import {
-  PackagePlus,
-  ScanLine,
-  Receipt,
-  Plus,
-  X,
-  type LucideIcon,
-} from "lucide-react";
-import {
+  DOC_TYPES,
   addDoc,
   addProduct,
-  applyMovement,
-  DOC_TYPES,
-  loadProducts,
+  generateSku,
+  knownCategories,
+  knownDestinations,
+  knownLocations,
+  knownSuppliers,
+  landedUnitCost,
+  money,
+  suggestCategory,
+  today,
   type DocType,
 } from "@/lib/stock-storage";
-import { useProducts } from "@/hooks/use-stock";
-
-type ActionId = "receive" | "sale" | "product" | "scan" | null;
-
-export function QuickActions() {
-  const [open, setOpen] = useState<ActionId>(null);
-  const actions: { id: Exclude<ActionId, null>; label: string; Icon: LucideIcon }[] = [
-    { id: "receive", label: "Receive", Icon: PackagePlus },
-    { id: "sale", label: "Sell", Icon: Receipt },
-    { id: "product", label: "Add", Icon: Plus },
-  ];
-
-  return (
-    <>
-      <div className="grid grid-cols-3 gap-2">
-        {actions.map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            onClick={() => setOpen(id)}
-            className="panel-raised flex flex-col items-center gap-1.5 px-2 py-3.5 transition-colors active:bg-steel-800"
-          >
-            <Icon className="size-5 text-hivis" strokeWidth={2} />
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
-              {label}
-            </span>
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={() => setOpen("scan")}
-        className="mt-2 flex w-full items-center justify-center gap-2 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-steel-400 active:text-hivis"
-      >
-        <ScanLine className="size-3.5" strokeWidth={2} />
-        Scan Document
-      </button>
-
-
-      <Modal
-        open={open === "receive"}
-        title="Receive Stock"
-        onClose={() => setOpen(null)}
-      >
-        <MovementForm kind="received" onDone={() => setOpen(null)} />
-      </Modal>
-      <Modal open={open === "sale"} title="Record Sale" onClose={() => setOpen(null)}>
-        <MovementForm kind="sold" onDone={() => setOpen(null)} />
-      </Modal>
-      <Modal
-        open={open === "product"}
-        title="New Product"
-        onClose={() => setOpen(null)}
-      >
-        <ProductForm onDone={() => setOpen(null)} />
-      </Modal>
-      <Modal
-        open={open === "scan"}
-        title="Scan Document"
-        onClose={() => setOpen(null)}
-      >
-        <DocForm onDone={() => setOpen(null)} />
-      </Modal>
-    </>
-  );
-}
 
 export function Modal({
   open,
@@ -93,9 +29,9 @@ export function Modal({
 }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-6">
-      <div className="w-full max-w-md border border-steel-700 bg-steel-900">
-        <div className="hazard-bar h-[3px] w-full" />
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 sm:items-center sm:p-6">
+      <div className="max-h-[92vh] w-full max-w-md overflow-y-auto border border-steel-700 bg-steel-900">
+        <div className="hazard-bar sticky top-0 h-[3px] w-full" />
         <div className="flex items-center justify-between border-b border-steel-700 px-4 py-3">
           <h3 className="font-display text-[15px] font-semibold uppercase tracking-[0.08em]">
             {title}
@@ -110,13 +46,7 @@ export function Modal({
   );
 }
 
-export function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="label-industrial">{label}</span>
@@ -125,93 +55,86 @@ export function Field({
   );
 }
 
-const inputCls =
-  "w-full panel-recessed px-3 py-2.5 font-mono text-[13px] text-foreground outline-none focus:border-hivis";
+export const inputCls =
+  "w-full panel-recessed px-3 py-3 font-mono text-[13px] text-foreground outline-none focus:border-hivis";
 
 export function SubmitBar({ label }: { label: string }) {
   return (
     <button
       type="submit"
-      className="mt-4 w-full rounded-[3px] bg-hivis px-4 py-3 font-mono text-[11px] uppercase tracking-[0.16em] text-primary-foreground active:opacity-80"
+      className="mt-4 w-full rounded-[3px] bg-hivis px-4 py-3.5 font-mono text-[11px] uppercase tracking-[0.16em] text-primary-foreground active:opacity-80"
     >
       {label}
     </button>
   );
 }
 
-function MovementForm({
-  kind,
-  onDone,
+export function Chips({
+  options,
+  onPick,
 }: {
-  kind: "received" | "sold";
-  onDone: () => void;
+  options: string[];
+  onPick: (v: string) => void;
 }) {
-  const products = useProducts();
-  const [productId, setProductId] = useState("");
-  const [qty, setQty] = useState("1");
-  const [ref, setRef] = useState("");
-
-  if (products.length === 0) {
-    return (
-      <p className="font-mono text-[11px] text-steel-400">
-        NO PRODUCTS ON FILE — CREATE A PRODUCT FIRST.
-      </p>
-    );
-  }
-
+  if (options.length === 0) return null;
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const id = productId || products[0].id;
-        applyMovement(id, kind, Number(qty) || 0, ref.toUpperCase() || undefined);
-        onDone();
-      }}
-      className="space-y-3"
-    >
-      <Field label="Product">
-        <select
-          className={inputCls}
-          value={productId || products[0].id}
-          onChange={(e) => setProductId(e.target.value)}
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {options.slice(0, 8).map((o) => (
+        <button
+          key={o}
+          type="button"
+          onClick={() => onPick(o)}
+          className="rounded-[2px] border border-steel-700 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-steel-400 active:border-hivis active:text-hivis"
         >
-          {products.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.sku} — {p.name}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label="Quantity">
-        <input
-          className={inputCls}
-          type="number"
-          min="1"
-          value={qty}
-          onChange={(e) => setQty(e.target.value)}
-        />
-      </Field>
-      <Field label={kind === "received" ? "PO / Docket ref" : "Invoice ref"}>
-        <input
-          className={inputCls}
-          value={ref}
-          onChange={(e) => setRef(e.target.value)}
-          placeholder={kind === "received" ? "PO-1063" : "INV-3350"}
-        />
-      </Field>
-      <SubmitBar label={kind === "received" ? "Post Receipt" : "Post Sale"} />
-    </form>
+          {o}
+        </button>
+      ))}
+    </div>
   );
 }
 
-function ProductForm({ onDone }: { onDone: () => void }) {
+/** Big new-item form with auto SKU, auto category and auto landed cost. */
+export function ItemForm({ onDone }: { onDone: () => void }) {
   const [name, setName] = useState("");
   const [sku, setSku] = useState("");
-  const [unitCost, setUnitCost] = useState("0");
-  const [sellPrice, setSellPrice] = useState("0");
-  const [onHand, setOnHand] = useState("0");
-  const [reorderPoint, setReorderPoint] = useState("10");
-  const [bin, setBin] = useState("");
+  const [skuTouched, setSkuTouched] = useState(false);
+  const [category, setCategory] = useState("Other");
+  const [catTouched, setCatTouched] = useState(false);
+  const [qty, setQty] = useState("");
+  const [supplier, setSupplier] = useState("");
+  const [destination, setDestination] = useState("");
+  const [location, setLocation] = useState("");
+  const [productCost, setProductCost] = useState("");
+  const [freightCost, setFreightCost] = useState("");
+  const [sellPrice, setSellPrice] = useState("");
+  const [lowLevel, setLowLevel] = useState("");
+  const [receivedAt, setReceivedAt] = useState(today());
+  const [notes, setNotes] = useState("");
+
+  const [suppliers, setSuppliers] = useState<string[]>([]);
+  const [destinations, setDestinations] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSuppliers(knownSuppliers());
+    setDestinations(knownDestinations());
+    setLocations(knownLocations());
+    setCategories(knownCategories());
+  }, []);
+
+  useEffect(() => {
+    if (!name.trim()) return;
+    const cat = catTouched ? category : suggestCategory(name);
+    if (!catTouched) setCategory(cat);
+    if (!skuTouched) setSku(generateSku(name, cat));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, catTouched, category]);
+
+  const q = Number(qty) || 0;
+  const landed = landedUnitCost(Number(productCost) || 0, Number(freightCost) || 0, q);
+  const sell = Number(sellPrice) || 0;
+  const profit = sell > 0 ? sell - landed : 0;
 
   return (
     <form
@@ -220,80 +143,189 @@ function ProductForm({ onDone }: { onDone: () => void }) {
         if (!name.trim()) return;
         addProduct({
           name: name.trim(),
-          sku:
-            sku.trim().toUpperCase() ||
-            `ROT-${String(loadProducts().length + 1).padStart(3, "0")}`,
-          unitCost: Number(unitCost) || 0,
-          sellPrice: Number(sellPrice) || 0,
-          onHand: Number(onHand) || 0,
-          reorderPoint: Number(reorderPoint) || 0,
-          bin: bin.trim().toUpperCase() || undefined,
+          sku: (sku || generateSku(name, category)).toUpperCase(),
+          category: category || "Other",
+          qty: q,
+          supplier: supplier.trim(),
+          destination: destination.trim(),
+          location: location.trim(),
+          productCost: Number(productCost) || 0,
+          freightCost: Number(freightCost) || 0,
+          sellPrice: sell,
+          lowLevel: Number(lowLevel) || 0,
+          receivedAt,
+          notes: notes.trim() || undefined,
         });
         onDone();
       }}
-      className="space-y-3"
+      className="space-y-3.5"
     >
-      <Field label="Description">
+      <Field label="Product name">
         <input
           className={inputCls}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Hi-Vis Work Cap"
+          placeholder="UGREEN 130W Car Charger"
+          autoFocus
         />
       </Field>
-      <Field label="SKU">
+
+      <Field label="SKU (auto)">
         <input
           className={inputCls}
           value={sku}
-          onChange={(e) => setSku(e.target.value)}
-          placeholder="ROT-CAP-014"
+          onChange={(e) => {
+            setSkuTouched(true);
+            setSku(e.target.value.toUpperCase());
+          }}
+          placeholder="AUTO"
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Unit cost">
+
+      <Field label="Category (auto suggested)">
+        <select
+          className={inputCls}
+          value={category}
+          onChange={(e) => {
+            setCatTouched(true);
+            setCategory(e.target.value);
+          }}
+        >
+          {categories.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Quantity received">
+        <input
+          className={inputCls}
+          type="number"
+          inputMode="numeric"
+          min="0"
+          value={qty}
+          onChange={(e) => setQty(e.target.value)}
+          placeholder="50"
+        />
+      </Field>
+
+      <Field label="Supplier / source">
+        <input
+          className={inputCls}
+          value={supplier}
+          onChange={(e) => setSupplier(e.target.value)}
+          placeholder="Alibaba"
+        />
+      </Field>
+      <Chips options={suppliers} onPick={setSupplier} />
+
+      <Field label="Destination">
+        <input
+          className={inputCls}
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+          placeholder="Rotation Co."
+        />
+      </Field>
+      <Chips options={destinations} onPick={setDestination} />
+
+      <Field label="Storage location">
+        <input
+          className={inputCls}
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Shelf A"
+        />
+      </Field>
+      <Chips options={locations} onPick={setLocation} />
+
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="Total product cost">
           <input
             className={inputCls}
             type="number"
+            inputMode="decimal"
             step="0.01"
-            value={unitCost}
-            onChange={(e) => setUnitCost(e.target.value)}
+            value={productCost}
+            onChange={(e) => setProductCost(e.target.value)}
+            placeholder="400"
           />
         </Field>
-        <Field label="Sell price">
+        <Field label="Freight cost">
           <input
             className={inputCls}
             type="number"
+            inputMode="decimal"
             step="0.01"
-            value={sellPrice}
-            onChange={(e) => setSellPrice(e.target.value)}
-          />
-        </Field>
-        <Field label="Opening qty">
-          <input
-            className={inputCls}
-            type="number"
-            value={onHand}
-            onChange={(e) => setOnHand(e.target.value)}
-          />
-        </Field>
-        <Field label="Reorder point">
-          <input
-            className={inputCls}
-            type="number"
-            value={reorderPoint}
-            onChange={(e) => setReorderPoint(e.target.value)}
+            value={freightCost}
+            onChange={(e) => setFreightCost(e.target.value)}
+            placeholder="100"
           />
         </Field>
       </div>
-      <Field label="Bin location">
+
+      <div className="panel-recessed grid grid-cols-2 gap-2 px-3 py-3">
+        <div>
+          <p className="label-industrial">Landed cost / item</p>
+          <p className="num-xl mt-1 text-[20px] text-hivis">{money(landed)}</p>
+        </div>
+        <div>
+          <p className="label-industrial">Profit / item</p>
+          <p
+            className="num-xl mt-1 text-[20px]"
+            style={{ color: profit >= 0 ? "var(--ok)" : "var(--crit)" }}
+          >
+            {sell > 0 ? money(profit) : "—"}
+          </p>
+        </div>
+      </div>
+
+      <Field label="Selling price (optional)">
         <input
           className={inputCls}
-          value={bin}
-          onChange={(e) => setBin(e.target.value)}
-          placeholder="A-01"
+          type="number"
+          inputMode="decimal"
+          step="0.01"
+          value={sellPrice}
+          onChange={(e) => setSellPrice(e.target.value)}
+          placeholder="19.99"
         />
       </Field>
-      <SubmitBar label="Create Product" />
+
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="Date received">
+          <input
+            className={inputCls}
+            type="date"
+            value={receivedAt}
+            onChange={(e) => setReceivedAt(e.target.value)}
+          />
+        </Field>
+        <Field label="Low stock level">
+          <input
+            className={inputCls}
+            type="number"
+            inputMode="numeric"
+            min="0"
+            value={lowLevel}
+            onChange={(e) => setLowLevel(e.target.value)}
+            placeholder="5"
+          />
+        </Field>
+      </div>
+
+      <Field label="Notes (optional)">
+        <textarea
+          className={inputCls}
+          rows={2}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
+      </Field>
+
+      <SubmitBar label="Save Item" />
     </form>
   );
 }
@@ -302,29 +334,24 @@ export function DocForm({ onDone }: { onDone: () => void }) {
   const [title, setTitle] = useState("");
   const [type, setType] = useState<DocType>("delivery_docket");
   const [ref, setRef] = useState("");
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(today());
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         if (!title.trim()) return;
-        addDoc({
-          title: title.trim(),
-          type,
-          ref: ref.trim().toUpperCase() || undefined,
-          date,
-        });
+        addDoc({ title: title.trim(), type, ref: ref.trim() || undefined, date });
         onDone();
       }}
       className="space-y-3"
     >
-      <Field label="Document title">
+      <Field label="Title">
         <input
           className={inputCls}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Northline delivery docket"
+          placeholder="Alibaba invoice"
         />
       </Field>
       <Field label="Type">
@@ -333,31 +360,24 @@ export function DocForm({ onDone }: { onDone: () => void }) {
           value={type}
           onChange={(e) => setType(e.target.value as DocType)}
         >
-          {DOC_TYPES.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.label}
+          {DOC_TYPES.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.label}
             </option>
           ))}
         </select>
       </Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Reference">
-          <input
-            className={inputCls}
-            value={ref}
-            onChange={(e) => setRef(e.target.value)}
-            placeholder="DKT-8842"
-          />
-        </Field>
-        <Field label="Date">
-          <input
-            className={inputCls}
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </Field>
-      </div>
+      <Field label="Reference (optional)">
+        <input className={inputCls} value={ref} onChange={(e) => setRef(e.target.value)} />
+      </Field>
+      <Field label="Date">
+        <input
+          className={inputCls}
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+      </Field>
       <SubmitBar label="File Document" />
     </form>
   );
