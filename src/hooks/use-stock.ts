@@ -2,11 +2,8 @@ import { useEffect, useState } from "react";
 import {
   CHANGED_EVENT,
   loadDocs,
-  loadInbound,
   loadMovements,
   loadProducts,
-  seedIfEmpty,
-  type InboundOrder,
   type Movement,
   type Product,
   type StockDoc,
@@ -15,7 +12,6 @@ import {
 function useLocal<T>(read: () => T[]): T[] {
   const [rows, setRows] = useState<T[]>([]);
   useEffect(() => {
-    seedIfEmpty();
     const sync = () => setRows(read());
     sync();
     window.addEventListener(CHANGED_EVENT, sync);
@@ -31,5 +27,4 @@ function useLocal<T>(read: () => T[]): T[] {
 
 export const useProducts = () => useLocal<Product>(loadProducts);
 export const useMovements = () => useLocal<Movement>(loadMovements);
-export const useInbound = () => useLocal<InboundOrder>(loadInbound);
 export const useDocs = () => useLocal<StockDoc>(loadDocs);

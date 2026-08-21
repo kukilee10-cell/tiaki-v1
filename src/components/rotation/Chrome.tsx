@@ -2,7 +2,6 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Boxes,
   LayoutGrid,
-  Truck,
   Receipt,
   FileText,
   type LucideIcon,
@@ -93,7 +92,6 @@ export function Stat({
 const TABS: { to: string; label: string; Icon: LucideIcon }[] = [
   { to: "/", label: "Dash", Icon: LayoutGrid },
   { to: "/stock", label: "Stock", Icon: Boxes },
-  { to: "/inbound", label: "Inbound", Icon: Truck },
   { to: "/sales", label: "Sales", Icon: Receipt },
   { to: "/documents", label: "Dockets", Icon: FileText },
 ];
@@ -102,7 +100,7 @@ export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-steel-700 bg-steel-900"
+      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-steel-700 bg-steel-900"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >
