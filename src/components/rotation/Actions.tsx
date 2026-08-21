@@ -22,28 +22,35 @@ type ActionId = "receive" | "sale" | "product" | "scan" | null;
 export function QuickActions() {
   const [open, setOpen] = useState<ActionId>(null);
   const actions: { id: Exclude<ActionId, null>; label: string; Icon: LucideIcon }[] = [
-    { id: "receive", label: "Receive Stock", Icon: PackagePlus },
-    { id: "sale", label: "Record Sale", Icon: Receipt },
-    { id: "product", label: "New Product", Icon: Plus },
-    { id: "scan", label: "Scan Document", Icon: ScanLine },
+    { id: "receive", label: "Receive", Icon: PackagePlus },
+    { id: "sale", label: "Sell", Icon: Receipt },
+    { id: "product", label: "Add", Icon: Plus },
   ];
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {actions.map(({ id, label, Icon }) => (
           <button
             key={id}
             onClick={() => setOpen(id)}
-            className="panel-raised hivis-edge flex items-center gap-2.5 px-3 py-3 text-left transition-colors active:bg-steel-800"
+            className="panel-raised flex flex-col items-center gap-1.5 px-2 py-3.5 transition-colors active:bg-steel-800"
           >
-            <Icon className="size-4 text-hivis" strokeWidth={2} />
+            <Icon className="size-5 text-hivis" strokeWidth={2} />
             <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
               {label}
             </span>
           </button>
         ))}
       </div>
+      <button
+        onClick={() => setOpen("scan")}
+        className="mt-2 flex w-full items-center justify-center gap-2 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-steel-400 active:text-hivis"
+      >
+        <ScanLine className="size-3.5" strokeWidth={2} />
+        Scan Document
+      </button>
+
 
       <Modal
         open={open === "receive"}
